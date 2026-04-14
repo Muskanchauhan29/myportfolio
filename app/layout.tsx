@@ -1,32 +1,11 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Outfit } from "next/font/google";
 import "./globals.css";
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-cormorant",
-  display: "swap",
-});
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-outfit",
-  display: "swap",
-});
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Muskan | Data Science Portfolio",
+  title: "Muskan — Data Science Portfolio",
   description:
-    "Muskan Chauhan — Data Science student at Maharshi Dayanand University. Turning raw data into real insights.",
-  keywords: ["Data Science", "Portfolio", "Python", "Machine Learning", "Muskan Chauhan"],
-  authors: [{ name: "Muskan Chauhan" }],
-  openGraph: {
-    title: "Muskan | Data Science Portfolio",
-    description: "Turning raw data into real insights",
-    type: "website",
-  },
+    "B.Tech CSE Data Science student at MDU. Turning raw data into real insights.",
 };
 
 export default function RootLayout({
@@ -35,8 +14,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
-      <body className="antialiased" style={{ backgroundColor: "#F9F7F4" }}>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body style={{ margin: 0, padding: 0, background: "#F5F0EA" }}>
+        <Navbar />
         {children}
       </body>
     </html>

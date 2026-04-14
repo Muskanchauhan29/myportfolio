@@ -1,19 +1,25 @@
+import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import About from "@/components/About";
+import Skills from "@/components/Skills";
+import Projects from "@/components/Projects";
+import Experience from "@/components/Experience";
+import Certifications from "@/components/Certifications";
+import Contact from "@/components/Contact";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main>
-      {/* ── STEP 2 COMPLETE ── */}
+    <main style={{ background: "#0a0805" }}>
+      <Navbar />
       <Hero />
-
-      {/* ── COMING NEXT (we'll build these one by one) ── */}
-      {/* <Navbar />       — Step 3  */}
-      {/* <About />        — Step 4  */}
-      {/* <Skills />       — Step 5  */}
-      {/* <Projects />     — Step 6  */}
-      {/* <Experience />   — Step 7  */}
-      {/* <Certifications /> — Step 8 */}
-      {/* <Contact />      — Step 9  */}
+      <About />
+      <Skills />
+      <Projects />
+      <Experience />
+      <Certifications />
+      <Contact />
+      <Footer />
     </main>
   );
 }
