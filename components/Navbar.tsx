@@ -18,8 +18,6 @@ export default function Navbar() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
-
-      // Highlight active section
       const sections = NAV_LINKS.map((l) => l.href.slice(1));
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = document.getElementById(sections[i]);
@@ -33,107 +31,142 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
-  ) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setMenuOpen(false);
     const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
+    if (target) target.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      <nav
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          padding: scrolled ? "1rem 3rem" : "1.6rem 3rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: scrolled
-            ? "rgba(245,240,234,0.92)"
-            : "transparent",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(196,168,130,0.25)" : "none",
-          transition: "all 0.4s ease",
-        }}
-      >
-        {/* Logo / Name */}
-        <a
-          href="#hero"
-          onClick={(e) => handleNavClick(e, "#hero")}
-          style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: "1.35rem",
-            fontWeight: 700,
-            color: "#1C1713",
-            textDecoration: "none",
-            letterSpacing: "-0.01em",
-          }}
-        >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@300;400&display=swap');
+
+        .nav-root {
+          position: fixed;
+          top: 0; left: 0; right: 0;
+          z-index: 100;
+          padding: 1.1rem 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          /* Always visible glass — stronger when scrolled */
+          background: rgba(18, 14, 10, 0.55);
+          backdrop-filter: blur(18px) saturate(1.4);
+          -webkit-backdrop-filter: blur(18px) saturate(1.4);
+          border-bottom: 1px solid rgba(196,168,130,0.12);
+          transition: background 0.4s ease, padding 0.4s ease, border-color 0.4s ease;
+        }
+        .nav-root.scrolled {
+          background: rgba(18, 14, 10, 0.82);
+          border-bottom-color: rgba(196,168,130,0.22);
+          padding: 0.8rem 3rem;
+        }
+
+        .nav-logo {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: 1.35rem;
+          font-weight: 700;
+          color: #f5ede0;
+          text-decoration: none;
+          letter-spacing: -0.01em;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .nav-logo-dot {
+          display: inline-block;
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: #C4A882;
+          flex-shrink: 0;
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 2.2rem;
+          align-items: center;
+        }
+
+        .nav-link {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.68rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          text-decoration: none;
+          color: rgba(245,237,224,0.55);
+          border-bottom: 1px solid transparent;
+          padding-bottom: 2px;
+          transition: color 0.25s, border-color 0.25s;
+        }
+        .nav-link:hover, .nav-link.active {
+          color: #f5ede0;
+          border-bottom-color: #C4A882;
+        }
+
+        .hamburger {
+          display: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 4px;
+          flex-direction: column;
+          gap: 5px;
+        }
+        .ham-line {
+          display: block;
+          width: 22px; height: 1.5px;
+          background: #f5ede0;
+          transition: all 0.3s ease;
+        }
+
+        .mobile-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 99;
+          background: rgba(12, 9, 6, 0.96);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 2.5rem;
+        }
+        .mobile-link {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: 2.2rem;
+          color: #f5ede0;
+          text-decoration: none;
+          letter-spacing: -0.01em;
+          transition: color 0.2s;
+        }
+        .mobile-link:hover { color: #C4A882; }
+
+        @media (max-width: 768px) {
+          .nav-links { display: none !important; }
+          .hamburger { display: flex !important; }
+          .nav-root { padding: 1rem 1.5rem !important; }
+          .nav-root.scrolled { padding: 0.8rem 1.5rem !important; }
+        }
+      `}</style>
+
+      <nav className={`nav-root ${scrolled ? "scrolled" : ""}`}>
+        <a href="#hero" className="nav-logo" onClick={(e) => handleNavClick(e, "#hero")}>
           Muskan
-          <span
-            style={{
-              display: "inline-block",
-              width: "5px",
-              height: "5px",
-              borderRadius: "50%",
-              background: "#C4A882",
-              marginLeft: "4px",
-              verticalAlign: "middle",
-              marginBottom: "3px",
-            }}
-          />
+          <span className="nav-logo-dot" />
         </a>
 
-        {/* Desktop Links */}
-        <div
-          className="desktop-nav"
-          style={{
-            display: "flex",
-            gap: "2.2rem",
-            alignItems: "center",
-          }}
-        >
+        <div className="nav-links">
           {NAV_LINKS.map((link) => {
             const sectionId = link.href.slice(1);
-            const isActive = activeSection === sectionId;
             return (
               <a
                 key={link.label}
                 href={link.href}
+                className={`nav-link ${activeSection === sectionId ? "active" : ""}`}
                 onClick={(e) => handleNavClick(e, link.href)}
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.68rem",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  textDecoration: "none",
-                  color: isActive ? "#1C1713" : "#8A7B6E",
-                  borderBottom: isActive
-                    ? "1px solid #C4A882"
-                    : "1px solid transparent",
-                  paddingBottom: "2px",
-                  transition: "color 0.25s, border-color 0.25s",
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    (e.target as HTMLElement).style.color = "#1C1713";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    (e.target as HTMLElement).style.color = "#8A7B6E";
-                  }
-                }}
               >
                 {link.label}
               </a>
@@ -141,88 +174,41 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Hamburger (mobile) */}
         <button
           className="hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
-          style={{
-            display: "none",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "4px",
-            flexDirection: "column",
-            gap: "5px",
-          }}
           aria-label="Toggle menu"
         >
           {[0, 1, 2].map((i) => (
             <span
               key={i}
+              className="ham-line"
               style={{
-                display: "block",
-                width: "22px",
-                height: "1.5px",
-                background: "#1C1713",
-                transition: "all 0.3s ease",
                 transform:
-                  menuOpen && i === 0
-                    ? "translateY(6.5px) rotate(45deg)"
-                    : menuOpen && i === 2
-                    ? "translateY(-6.5px) rotate(-45deg)"
-                    : menuOpen && i === 1
-                    ? "scaleX(0)"
-                    : "none",
+                  menuOpen && i === 0 ? "translateY(6.5px) rotate(45deg)"
+                  : menuOpen && i === 2 ? "translateY(-6.5px) rotate(-45deg)"
+                  : menuOpen && i === 1 ? "scaleX(0)"
+                  : "none",
               }}
             />
           ))}
         </button>
       </nav>
 
-      {/* Mobile Menu Overlay */}
       {menuOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 99,
-            background: "rgba(245,240,234,0.97)",
-            backdropFilter: "blur(20px)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "2.5rem",
-          }}
-        >
+        <div className="mobile-overlay">
           {NAV_LINKS.map((link) => (
             <a
               key={link.label}
               href={link.href}
+              className="mobile-link"
               onClick={(e) => handleNavClick(e, link.href)}
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontSize: "2rem",
-                color: "#1C1713",
-                textDecoration: "none",
-                letterSpacing: "-0.01em",
-              }}
             >
               {link.label}
             </a>
           ))}
         </div>
       )}
-
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@300;400&display=swap');
-
-        @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .hamburger { display: flex !important; }
-          nav { padding: 1rem 1.5rem !important; }
-        }
-      `}</style>
     </>
   );
 }
