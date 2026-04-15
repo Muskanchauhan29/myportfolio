@@ -13,7 +13,9 @@ const projects = [
     metricLabel: "Accuracy",
     accent: "#c9a96e",
     link: "#",
+    github: "#",
     category: "Natural Language Processing",
+    featured: true,
   },
   {
     id: "02",
@@ -26,7 +28,9 @@ const projects = [
     metricLabel: "Early Warning",
     accent: "#7ab8c9",
     link: "#",
+    github: "#",
     category: "Machine Learning",
+    featured: false,
   },
   {
     id: "03",
@@ -39,7 +43,9 @@ const projects = [
     metricLabel: "Time Saved",
     accent: "#e07b6a",
     link: "#",
+    github: "#",
     category: "Generative AI",
+    featured: false,
   },
   {
     id: "04",
@@ -52,407 +58,390 @@ const projects = [
     metricLabel: "Data Range",
     accent: "#98c9a3",
     link: "#",
+    github: "#",
     category: "Data Visualisation",
+    featured: false,
   },
 ];
 
-export default function Projects() {
+interface ProjectsProps {
+  glass?: boolean;
+}
+
+export default function Projects({ glass = false }: ProjectsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [activeCard, setActiveCard] = useState<number | null>(null);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
+      },
       { threshold: 0.1 }
     );
     if (sectionRef.current) obs.observe(sectionRef.current);
     return () => obs.disconnect();
   }, []);
 
+  const featured = projects.find((p) => p.featured)!;
+  const rest = projects.filter((p) => !p.featured);
+
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@300;400;500&display=swap');
 
-        .proj-section {
+        .p2-section {
           background: #13100d;
           padding: 130px 0 140px;
-          position: relative;
-          overflow: hidden;
+          position: relative; overflow: hidden;
         }
-
-        .proj-section::before {
+        .p2-section::before {
           content: '';
-          position: absolute;
-          inset: 0;
+          position: absolute; inset: 0;
           background:
             radial-gradient(ellipse 60% 40% at 10% 80%, rgba(201,169,110,0.04) 0%, transparent 70%),
             radial-gradient(ellipse 50% 50% at 90% 20%, rgba(122,184,201,0.04) 0%, transparent 70%);
           pointer-events: none;
         }
-
-        .proj-eyebrow {
-          position: absolute;
-          top: 60px;
-          left: 5%;
+        .p2-eyebrow {
+          position: absolute; top: 60px; left: 5%;
           font-family: 'Playfair Display', serif;
           font-size: clamp(80px, 14vw, 180px);
-          font-weight: 700;
-          color: transparent;
+          font-weight: 700; color: transparent;
           -webkit-text-stroke: 1px rgba(245,237,224,0.04);
-          line-height: 1;
-          user-select: none;
-          pointer-events: none;
+          line-height: 1; user-select: none; pointer-events: none;
+        }
+        .p2-inner {
+          max-width: 1200px; margin: 0 auto; padding: 0 48px;
+          position: relative; z-index: 1;
         }
 
-        .proj-inner {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 48px;
-          position: relative;
-          z-index: 1;
-        }
-
-        /* Header row */
-        .proj-header {
-          display: flex;
-          align-items: flex-end;
-          justify-content: space-between;
-          margin-bottom: 80px;
-          gap: 24px;
-          flex-wrap: wrap;
-        }
-
-        .proj-header-left {}
-
-        .proj-tag {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          color: #c9a96e;
+        /* Header */
+        .p2-tag {
+          font-family: 'DM Mono', monospace; font-size: 10px;
+          letter-spacing: 0.3em; text-transform: uppercase; color: #c9a96e;
           margin-bottom: 14px;
-          opacity: 0;
-          transform: translateY(12px);
+          opacity: 0; transform: translateY(12px);
           transition: opacity 0.6s ease, transform 0.6s ease;
         }
-        .proj-tag.vis { opacity: 1; transform: translateY(0); }
+        .p2-tag.vis { opacity: 1; transform: translateY(0); }
 
-        .proj-title {
+        .p2-header {
+          display: flex; align-items: flex-end; justify-content: space-between;
+          margin-bottom: 72px; gap: 24px; flex-wrap: wrap;
+        }
+        .p2-title {
           font-family: 'Playfair Display', serif;
           font-size: clamp(40px, 5vw, 68px);
-          font-weight: 400;
-          color: #f5ede0;
-          line-height: 1.05;
-          margin: 0;
-          opacity: 0;
-          transform: translateY(24px);
+          font-weight: 400; color: #f5ede0; line-height: 1.05; margin: 0;
+          opacity: 0; transform: translateY(24px);
           transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
         }
-        .proj-title.vis { opacity: 1; transform: translateY(0); }
-        .proj-title em {
-          font-style: italic;
-          color: #c9a96e;
-        }
+        .p2-title.vis { opacity: 1; transform: translateY(0); }
+        .p2-title em { font-style: italic; color: #c9a96e; }
 
-        .proj-count {
-          font-family: 'DM Mono', monospace;
-          font-size: 11px;
-          color: rgba(245,237,224,0.25);
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          opacity: 0;
-          transition: opacity 0.7s ease 0.3s;
-          padding-bottom: 6px;
+        .p2-count {
+          font-family: 'DM Mono', monospace; font-size: 11px;
+          color: rgba(245,237,224,0.25); letter-spacing: 0.15em; text-transform: uppercase;
+          opacity: 0; transition: opacity 0.7s ease 0.3s; padding-bottom: 6px;
         }
-        .proj-count.vis { opacity: 1; }
+        .p2-count.vis { opacity: 1; }
 
-        /* Cards grid - 2 col */
-        .proj-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 2px;
-        }
-
-        @media (max-width: 860px) {
-          .proj-grid { grid-template-columns: 1fr; }
-        }
-
-        .proj-card {
+        /* ---- FEATURED CARD ---- */
+        .p2-featured {
           position: relative;
-          background: rgba(255,255,255,0.018);
-          border: 1px solid rgba(255,255,255,0.06);
-          padding: 44px 40px 36px;
+          border: 1px solid rgba(255,255,255,0.07);
+          background: rgba(255,255,255,0.02);
+          padding: 56px 52px;
+          margin-bottom: 2px;
           overflow: hidden;
-          cursor: pointer;
-          transition: border-color 0.35s ease, background 0.35s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
-          opacity: 0;
-          transform: translateY(30px);
+          opacity: 0; transform: translateY(30px);
+          transition: opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s,
+                      background 0.35s, border-color 0.35s;
         }
-        .proj-card.vis {
-          opacity: 1;
-          transform: translateY(0);
+        .p2-featured.vis { opacity: 1; transform: translateY(0); }
+        .p2-featured:hover {
+          background: rgba(255,255,255,0.035);
+          border-color: rgba(255,255,255,0.13);
         }
-        .proj-card:hover {
+        .p2-featured::before {
+          content: '';
+          position: absolute; top: 0; left: 0; right: 0; height: 2px;
+          background: linear-gradient(90deg, #c9a96e, transparent);
+          transform: scaleX(0); transform-origin: left;
+          transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+        }
+        .p2-featured:hover::before { transform: scaleX(1); }
+
+        /* glass mode */
+        .glass-on .p2-featured, .glass-on .p2-card {
+          backdrop-filter: blur(16px) !important;
+          -webkit-backdrop-filter: blur(16px) !important;
+        }
+        .glass-on .p2-featured {
+          background: rgba(255,255,255,0.04) !important;
+          border-color: rgba(255,255,255,0.1) !important;
+          box-shadow: 0 12px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .glass-on .p2-featured:hover {
+          background: rgba(255,255,255,0.07) !important;
+        }
+        .glass-on .p2-card {
+          background: rgba(255,255,255,0.03) !important;
+          border-color: rgba(255,255,255,0.08) !important;
+        }
+        .glass-on .p2-card:hover {
+          background: rgba(255,255,255,0.06) !important;
+        }
+
+        .p2-feat-badge {
+          display: inline-flex; align-items: center; gap: 6px;
+          font-family: 'DM Mono', monospace; font-size: 9px;
+          letter-spacing: 0.25em; text-transform: uppercase; color: #c9a96e;
+          border: 1px solid rgba(201,169,110,0.3); padding: 5px 12px;
+          margin-bottom: 28px;
+        }
+        .p2-feat-badge::before { content: '★'; }
+
+        .p2-feat-body {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 52px;
+          align-items: start;
+        }
+        @media (max-width: 760px) { .p2-feat-body { grid-template-columns: 1fr; } }
+
+        .p2-feat-title {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(32px, 4vw, 52px);
+          font-weight: 400; color: #f5ede0; line-height: 1.1; margin: 0 0 8px;
+        }
+        .p2-feat-sub {
+          font-family: 'DM Mono', monospace; font-size: 11px;
+          letter-spacing: 0.12em; text-transform: uppercase;
+          color: rgba(245,237,224,0.35); margin-bottom: 24px;
+        }
+        .p2-feat-desc {
+          font-family: 'DM Mono', monospace; font-size: 12.5px;
+          line-height: 1.9; color: rgba(245,237,224,0.5); margin-bottom: 28px;
+        }
+        .p2-feat-links {
+          display: flex; gap: 14px; align-items: center;
+        }
+        .p2-link-primary {
+          font-family: 'DM Mono', monospace; font-size: 10px;
+          letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none;
+          color: #1C1713; background: #c9a96e;
+          padding: 10px 22px; transition: background 0.25s, transform 0.2s;
+        }
+        .p2-link-primary:hover { background: #d4b88a; transform: translateY(-2px); }
+        .p2-link-ghost {
+          font-family: 'DM Mono', monospace; font-size: 10px;
+          letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none;
+          color: rgba(245,237,224,0.45); border: 1px solid rgba(255,255,255,0.12);
+          padding: 9px 22px; transition: all 0.25s;
+        }
+        .p2-link-ghost:hover { border-color: rgba(255,255,255,0.35); color: #f5ede0; }
+
+        .p2-feat-right {
+          display: flex; flex-direction: column; gap: 24px;
+        }
+        .p2-feat-metric {
+          display: flex; flex-direction: column;
+        }
+        .p2-feat-mv {
+          font-family: 'Playfair Display', serif; font-size: 72px;
+          font-weight: 700; color: #c9a96e; line-height: 1;
+        }
+        .p2-feat-ml {
+          font-family: 'DM Mono', monospace; font-size: 9px;
+          letter-spacing: 0.28em; text-transform: uppercase;
+          color: rgba(245,237,224,0.3); margin-top: 4px;
+        }
+        .p2-feat-tags {
+          display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .p2-tag-pill {
+          font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em;
+          padding: 5px 12px; background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08); color: rgba(245,237,224,0.4);
+          transition: all 0.25s;
+        }
+        .p2-featured:hover .p2-tag-pill { color: rgba(245,237,224,0.65); }
+
+        /* ---- SMALL CARDS GRID ---- */
+        .p2-grid {
+          display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+        }
+        @media (max-width: 860px) { .p2-grid { grid-template-columns: 1fr; } }
+
+        .p2-card {
+          position: relative; background: rgba(255,255,255,0.018);
+          border: 1px solid rgba(255,255,255,0.06);
+          padding: 40px 36px 32px; overflow: hidden; cursor: pointer;
+          transition: border-color 0.35s, background 0.35s, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+          opacity: 0; transform: translateY(30px);
+        }
+        .p2-card.vis { opacity: 1; transform: translateY(0); }
+        .p2-card:hover {
           border-color: rgba(255,255,255,0.15);
           background: rgba(255,255,255,0.035);
-          transform: translateY(-4px);
-          z-index: 2;
+          transform: translateY(-4px); z-index: 2;
         }
 
-        /* Accent line top */
-        .proj-card::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 2px;
-          transform: scaleX(0);
-          transform-origin: left;
+        .p2-card::before {
+          content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+          transform: scaleX(0); transform-origin: left;
           transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
         }
-        .proj-card:hover::before { transform: scaleX(1); }
+        .p2-card:hover::before { transform: scaleX(1); }
 
-        /* Number + category row */
-        .proj-card-meta {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 28px;
+        .p2-card-meta {
+          display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
         }
+        .p2-num { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: rgba(245,237,224,0.2); }
+        .p2-cat {
+          font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.22em;
+          text-transform: uppercase; padding: 4px 10px;
+          border: 1px solid rgba(255,255,255,0.1); color: rgba(245,237,224,0.35);
+          transition: all 0.3s;
+        }
+        .p2-card:hover .p2-cat { border-color: rgba(255,255,255,0.2); color: rgba(245,237,224,0.6); }
 
-        .proj-num {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.2em;
-          color: rgba(245,237,224,0.2);
-        }
+        .p2-card-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; color: #f5ede0; margin: 0 0 6px; }
+        .p2-card-sub { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,237,224,0.3); margin-bottom: 18px; }
+        .p2-card-sep { height: 1px; background: rgba(255,255,255,0.06); margin: 0 0 18px; transform: scaleX(0.3); transform-origin: left; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s; }
+        .p2-card:hover .p2-card-sep { transform: scaleX(1); }
+        .p2-card-desc { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.85; color: rgba(245,237,224,0.42); margin-bottom: 22px; transition: color 0.3s; }
+        .p2-card:hover .p2-card-desc { color: rgba(245,237,224,0.6); }
+        .p2-card-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 24px; }
 
-        .proj-category {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          padding: 5px 12px;
-          border: 1px solid rgba(255,255,255,0.1);
-          color: rgba(245,237,224,0.35);
-          transition: border-color 0.3s ease, color 0.3s ease;
-        }
-        .proj-card:hover .proj-category {
-          border-color: rgba(255,255,255,0.2);
-          color: rgba(245,237,224,0.6);
-        }
+        .p2-card-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+        .p2-metric { display: flex; flex-direction: column; }
+        .p2-mv { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+        .p2-ml { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(245,237,224,0.3); }
 
-        /* Title block */
-        .proj-card-title {
-          font-family: 'Playfair Display', serif;
-          font-size: clamp(24px, 2.8vw, 34px);
-          font-weight: 400;
-          color: #f5ede0;
-          line-height: 1.15;
-          margin: 0 0 6px;
-          transition: color 0.3s ease;
-        }
-
-        .proj-card-subtitle {
-          font-family: 'DM Mono', monospace;
-          font-size: 11px;
-          letter-spacing: 0.1em;
-          color: rgba(245,237,224,0.35);
-          margin-bottom: 22px;
-          text-transform: uppercase;
-        }
-
-        /* Separator */
-        .proj-card-sep {
-          height: 1px;
-          background: rgba(255,255,255,0.07);
-          margin: 0 0 22px;
-          transform: scaleX(0.3);
-          transform-origin: left;
-          transition: transform 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s;
-        }
-        .proj-card:hover .proj-card-sep { transform: scaleX(1); }
-
-        .proj-card-desc {
-          font-family: 'DM Mono', monospace;
-          font-size: 12.5px;
-          line-height: 1.9;
-          color: rgba(245,237,224,0.45);
-          margin-bottom: 28px;
-          transition: color 0.3s ease;
-        }
-        .proj-card:hover .proj-card-desc { color: rgba(245,237,224,0.6); }
-
-        /* Tags */
-        .proj-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-bottom: 32px;
-        }
-
-        .proj-tag-pill {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.1em;
-          padding: 5px 10px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          color: rgba(245,237,224,0.4);
-          transition: all 0.25s ease;
-        }
-        .proj-card:hover .proj-tag-pill {
-          background: rgba(255,255,255,0.07);
-          color: rgba(245,237,224,0.6);
-        }
-
-        /* Footer: metric + arrow */
-        .proj-card-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-        }
-
-        .proj-metric {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .proj-metric-value {
-          font-family: 'Playfair Display', serif;
-          font-size: 42px;
-          font-weight: 700;
-          line-height: 1;
-          margin-bottom: 4px;
-        }
-
-        .proj-metric-label {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          color: rgba(245,237,224,0.3);
-        }
-
-        .proj-arrow {
-          width: 44px; height: 44px;
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 50%;
+        .p2-arrow {
+          width: 40px; height: 40px;
+          border: 1px solid rgba(255,255,255,0.1); border-radius: 50%;
           display: flex; align-items: center; justify-content: center;
-          color: rgba(245,237,224,0.3);
-          font-size: 16px;
-          transition: all 0.3s ease;
-          text-decoration: none;
+          color: rgba(245,237,224,0.3); font-size: 14px; text-decoration: none;
+          transition: all 0.3s;
         }
-        .proj-card:hover .proj-arrow {
-          border-color: rgba(255,255,255,0.5);
-          color: #f5ede0;
-          transform: translate(3px, -3px);
-        }
+        .p2-card:hover .p2-arrow { border-color: rgba(255,255,255,0.5); color: #f5ede0; transform: translate(3px,-3px); }
 
-        /* Bottom CTA */
-        .proj-cta {
-          display: flex;
-          justify-content: center;
-          margin-top: 64px;
-          opacity: 0;
-          transform: translateY(16px);
+        /* CTA */
+        .p2-cta {
+          display: flex; justify-content: center; margin-top: 64px;
+          opacity: 0; transform: translateY(16px);
           transition: opacity 0.7s ease 0.8s, transform 0.7s ease 0.8s;
         }
-        .proj-cta.vis { opacity: 1; transform: translateY(0); }
-
-        .proj-cta-link {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-family: 'DM Mono', monospace;
-          font-size: 11px;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: rgba(245,237,224,0.35);
-          text-decoration: none;
-          padding-bottom: 4px;
-          border-bottom: 1px solid rgba(245,237,224,0.15);
-          transition: color 0.3s ease, border-color 0.3s ease;
+        .p2-cta.vis { opacity: 1; transform: translateY(0); }
+        .p2-cta-link {
+          display: flex; align-items: center; gap: 12px;
+          font-family: 'DM Mono', monospace; font-size: 11px;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          color: rgba(245,237,224,0.35); text-decoration: none;
+          padding-bottom: 4px; border-bottom: 1px solid rgba(245,237,224,0.15);
+          transition: color 0.3s, border-color 0.3s;
         }
-        .proj-cta-link:hover {
-          color: #c9a96e;
-          border-color: #c9a96e;
-        }
-        .proj-cta-link span { transition: transform 0.3s ease; }
-        .proj-cta-link:hover span { transform: translateX(4px); }
+        .p2-cta-link:hover { color: #c9a96e; border-color: #c9a96e; }
+        .p2-cta-link span { transition: transform 0.3s; }
+        .p2-cta-link:hover span { transform: translateX(4px); }
       `}</style>
 
-      <section ref={sectionRef} className="proj-section" id="projects">
-        <div className="proj-eyebrow">04</div>
-
-        <div className="proj-inner">
+      <section
+        ref={sectionRef}
+        className={`p2-section${glass ? " glass-on" : ""}`}
+        id="projects"
+      >
+        <div className="p2-eyebrow">04</div>
+        <div className="p2-inner">
           {/* Header */}
-          <div className="proj-header">
-            <div className="proj-header-left">
-              <div className={`proj-tag ${visible ? "vis" : ""}`}>Selected Work</div>
-              <h2 className={`proj-title ${visible ? "vis" : ""}`}>
+          <div className="p2-header">
+            <div>
+              <div className={`p2-tag ${visible ? "vis" : ""}`}>Selected Work</div>
+              <h2 className={`p2-title ${visible ? "vis" : ""}`}>
                 Projects that<br /><em>move the needle</em>
               </h2>
             </div>
-            <div className={`proj-count ${visible ? "vis" : ""}`}>
+            <div className={`p2-count ${visible ? "vis" : ""}`}>
               {String(projects.length).padStart(2, "0")} Projects
             </div>
           </div>
 
-          {/* Cards */}
-          <div className="proj-grid">
-            {projects.map((proj, i) => (
+          {/* Featured */}
+          <div className={`p2-featured ${visible ? "vis" : ""}`}>
+            <div className="p2-feat-badge">Featured Project</div>
+            <div className="p2-feat-body">
+              <div>
+                <h3 className="p2-feat-title">{featured.title}</h3>
+                <div className="p2-feat-sub">{featured.subtitle}</div>
+                <p className="p2-feat-desc">{featured.description}</p>
+                <div className="p2-feat-links">
+                  <a href={featured.link} className="p2-link-primary">Live Demo ↗</a>
+                  <a href={featured.github} className="p2-link-ghost">View Code</a>
+                </div>
+              </div>
+              <div className="p2-feat-right">
+                <div className="p2-feat-metric">
+                  <span className="p2-feat-mv" style={{ color: featured.accent }}>{featured.metric}</span>
+                  <span className="p2-feat-ml">{featured.metricLabel}</span>
+                </div>
+                <div className="p2-feat-tags">
+                  {featured.tags.map((t) => (
+                    <span key={t} className="p2-tag-pill">{t}</span>
+                  ))}
+                </div>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(245,237,224,0.2)" }}>
+                  {featured.category}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Rest of projects */}
+          <div className="p2-grid">
+            {rest.map((proj, i) => (
               <div
                 key={proj.id}
-                className={`proj-card ${visible ? "vis" : ""}`}
-                style={{
-                  transitionDelay: `${0.15 + i * 0.1}s`,
-                  "--accent": proj.accent,
-                } as React.CSSProperties}
-                onMouseEnter={() => setActiveCard(i)}
-                onMouseLeave={() => setActiveCard(null)}
+                className={`p2-card ${visible ? "vis" : ""}`}
+                style={{ transitionDelay: `${0.35 + i * 0.1}s` }}
               >
-                {/* Accent top line via inline style override */}
-                <style>{`
-                  .proj-card:nth-child(${i + 1})::before {
-                    background: linear-gradient(90deg, ${proj.accent}, transparent);
-                  }
-                `}</style>
+                <style>{`.p2-grid > div:nth-child(${i + 1})::before { background: linear-gradient(90deg, ${proj.accent}, transparent); }`}</style>
 
-                <div className="proj-card-meta">
-                  <span className="proj-num">{proj.id}</span>
-                  <span className="proj-category">{proj.category}</span>
+                <div className="p2-card-meta">
+                  <span className="p2-num">{proj.id}</span>
+                  <span className="p2-cat">{proj.category}</span>
                 </div>
 
-                <h3 className="proj-card-title">{proj.title}</h3>
-                <div className="proj-card-subtitle">{proj.subtitle}</div>
-                <div className="proj-card-sep" />
-                <p className="proj-card-desc">{proj.description}</p>
+                <h3 className="p2-card-title">{proj.title}</h3>
+                <div className="p2-card-sub">{proj.subtitle}</div>
+                <div className="p2-card-sep" />
+                <p className="p2-card-desc">{proj.description}</p>
 
-                <div className="proj-tags">
+                <div className="p2-card-tags">
                   {proj.tags.map((t) => (
-                    <span key={t} className="proj-tag-pill">{t}</span>
+                    <span key={t} className="p2-tag-pill">{t}</span>
                   ))}
                 </div>
 
-                <div className="proj-card-footer">
-                  <div className="proj-metric">
-                    <span className="proj-metric-value" style={{ color: proj.accent }}>
-                      {proj.metric}
-                    </span>
-                    <span className="proj-metric-label">{proj.metricLabel}</span>
+                <div className="p2-card-footer">
+                  <div className="p2-metric">
+                    <span className="p2-mv" style={{ color: proj.accent }}>{proj.metric}</span>
+                    <span className="p2-ml">{proj.metricLabel}</span>
                   </div>
-                  <a href={proj.link} className="proj-arrow" aria-label="View project">↗</a>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <a href={proj.link} className="p2-arrow" title="Live Demo">↗</a>
+                    <a href={proj.github} className="p2-arrow" title="GitHub" style={{ fontSize: 11, fontFamily: "DM Mono, monospace" }}>gh</a>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
           {/* CTA */}
-          <div className={`proj-cta ${visible ? "vis" : ""}`}>
-            <a href="#" className="proj-cta-link">
+          <div className={`p2-cta ${visible ? "vis" : ""}`}>
+            <a href="#" className="p2-cta-link">
               View all projects on GitHub <span>→</span>
             </a>
           </div>
