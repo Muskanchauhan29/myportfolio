@@ -13,7 +13,7 @@ const STATS = [
   { value: "4th", label: "Year" },
   { value: "8+", label: "Tools" },
   { value: "MDU", label: "University" },
-  { value: "2025", label: "Graduating" },
+  { value: "2026", label: "Graduating" },
 ];
 
 function useInView(threshold = 0.12) {
